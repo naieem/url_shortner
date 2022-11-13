@@ -38,4 +38,4 @@ $ npm run test:cov
 
 ## Stay in touch
 
-- Author - [Naieem Mahmud Supto](https://githib.com/naieem)
+- Author - [Naieem Mahmud Supto](https://github.com/naieem)
