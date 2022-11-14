@@ -1,6 +1,8 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { UrlShortnerController } from './controller/url_shortner.controller';
 import { Url, UrlSchema } from './schema/url.schema';
+import { UrlService } from './services/url_shortner.service';
 
 @Module({})
 export class UrlShortnerModule {
@@ -16,8 +18,8 @@ export class UrlShortnerModule {
                     }
                 ]),
             ],
-            controllers: [],
-            providers: [],
+            controllers: [UrlShortnerController],
+            providers: [UrlService],
             exports: [],
         };
     }
