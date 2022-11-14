@@ -1,3 +1,4 @@
+import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -9,6 +10,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   app.enableCors({ credentials: true, origin: true });
+  app.useGlobalPipes(new ValidationPipe());
   // Swagger Setup
   const swaggerConfig = new DocumentBuilder()
     .setTitle(configService.get<string>('SWAGGER_TITLE'))
