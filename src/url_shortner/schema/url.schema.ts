@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Document } from 'mongoose';
+import { nanoid } from 'nanoid';
+
 
 @Schema({ collection: 'Urls' })
 export class Url {
@@ -7,13 +9,13 @@ export class Url {
     @Prop({ required: true })
     originalUrl: string;
 
-    @Prop({ required: true })
+    @Prop({ required: true, default: nanoid() })
     shortCode: string;
 
     @Prop({ required: false })
     expiryDate: string;
 
-    @Prop({ required: false })
+    @Prop({ required: false, default: 0 })
     hitCounter: number;
 
 }

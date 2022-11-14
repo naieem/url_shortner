@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUrl, IsDate, IsNotEmpty } from 'class-validator';
+import { IsString, IsUrl, IsNotEmpty, IsDateString } from 'class-validator';
 
 export class CreateShortCodeDTO {
     @ApiProperty()
@@ -11,6 +11,5 @@ export class CreateShortCodeDTO {
     @ApiProperty()
     @IsNotEmpty()
     @IsString()
-    @IsDate()
     expiryDate: Date;
 }
