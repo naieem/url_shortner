@@ -2,8 +2,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { UrlShortnerModule } from './url_shortner/url_shortner.module';
+import { HttpExceptionFilter } from './utils/exception.handler';
+import { ResponseMapperInterceptor } from './utils/response.mapper';
 
 @Module({
   imports: [
@@ -32,6 +34,14 @@ import { UrlShortnerModule } from './url_shortner/url_shortner.module';
   providers: [{
     provide: APP_GUARD,
     useClass: ThrottlerGuard,
+  },
+  {
+    provide: APP_FILTER,
+    useClass: HttpExceptionFilter,
+  },
+  {
+    provide: APP_INTERCEPTOR,
+    useClass: ResponseMapperInterceptor,
   }],
 })
 export class AppModule { }
