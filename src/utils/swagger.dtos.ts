@@ -1,5 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 
+class Token{
+    @ApiProperty()
+    token:string;
+}
 export class GlobalResponseDto {
     @ApiProperty()
     success: boolean;
@@ -12,4 +16,11 @@ export class CreateShortUrlResponseDto extends GlobalResponseDto {
         description:'Short url for the original long url'
     })
     data: string;
+}
+
+export class SuperAdminTokenGenerationResponseDto extends GlobalResponseDto {
+    @ApiProperty({
+        type:Token
+    })
+    data: Token;
 }
