@@ -5,9 +5,12 @@ import {
 import { ResponseResults } from '../dtos/response.dto';
 import { CreateShortCodeDTO } from '../dtos/shortcode.dto';
 import { UrlService } from '../services/url_shortner.service';
-import { Url, UrlSchema } from '../schema/url.schema';
+import { Url } from '../schema/url.schema';
 import { ConfigService } from '@nestjs/config';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateShortUrlResponseDto } from 'src/utils/swagger.dtos';
 
+@ApiTags('Url Shortner Controller')
 @Controller()
 export class UrlShortnerController {
     constructor(private urlService: UrlService, private configService: ConfigService) { }
@@ -18,6 +21,15 @@ export class UrlShortnerController {
      * @param urlsPayload 
      * @returns 
      */
+    @ApiOperation({
+        summary: 'Create Short url',
+        description: 'Returns the short url for an original url given into the payload.',
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Give back shorten url.',
+        type: CreateShortUrlResponseDto
+    })
     @Post('/createshorturl')
     async createShortUrl(@Body() urlsPayload: CreateShortCodeDTO): Promise<ResponseResults> {
         try {
