@@ -4,29 +4,36 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Url, UrlQueriableFields } from '../schema/url.schema';
 import { CreateShortCodeDTO } from '../dtos/shortcode.dto';
 import { TERMS } from 'src/utils/constants';
+import { ConfigService } from '@nestjs/config';
+import { ICreateShorturlResponse, IUrlRedirectionResponse } from '../dtos/response.interface';
+
 
 @Injectable()
 export class UrlService {
-    constructor(@InjectModel(Url.name) private readonly urlModel: Model<Url>) { }
+    constructor(@InjectModel(Url.name) private readonly urlModel: Model<Url>, private configService: ConfigService) { }
 
     /**
      * Handler for creating shortUrl from Original Url
      * @param payload 
      * @returns 
      */
-    async createShortUrl<TYPO>(payload: CreateShortCodeDTO): Promise<TYPO> {
+    async createShortUrl(payload: CreateShortCodeDTO): Promise<ICreateShorturlResponse | string> {
         try {
             const urlRegex = /https?:\/{2}([a-zA-Z1-9])+.[a-zA-Z]{2,4}$/gi;
             const matches = payload.originalUrl.match(urlRegex);
             if (!matches) {
                 throw new Error(TERMS.INVALID_URL);
             }
-            const existingUrls = await this.urlModel.find({ originalUrl: payload.originalUrl })
-            if (existingUrls && existingUrls.length) {
-                throw new Error(TERMS.EXISTING_URL);
+            const existingUrls: Url = await this.urlModel.findOne({ originalUrl: payload.originalUrl })
+            if (existingUrls) {
+                return {
+                    message: TERMS.EXISTING_URL,
+                    url: this.configService.get('BASE_URL') + existingUrls.shortCode,
+                    expiration: existingUrls.expiryDate
+                }
             }
-            const url: TYPO | any = await this.urlModel.create(payload);
-            return url;
+            const url: Url = await this.urlModel.create(payload);
+            return this.configService.get('BASE_URL') + url.shortCode;
         } catch (error) {
             throw new Error(error);
         }
@@ -44,11 +51,34 @@ export class UrlService {
             throw new Error(error);
         }
     }
-    // async getFullUrlFromShortCode(code: string): Promise<Url[]> {
-    //     try {
-    //         return await this.urlModel.find().select(UrlQueriableFields).exec();
-    //     } catch (error) {
-    //         throw new Error(error);
-    //     }
-    // }
+    async getFullUrlFromShortCode(code: string): Promise<IUrlRedirectionResponse> {
+        try {
+            const today = new Date();
+            const url: Url = await this.urlModel.findOne({
+                shortCode: code
+            }).select(UrlQueriableFields).exec();
+            if (url) {
+                const expiryDate = new Date(url.expiryDate);
+                if (expiryDate < today) {
+                    return {
+                        IsExpired: true,
+                        url: url.originalUrl
+                    }
+                } else {
+                    await this.urlModel.updateOne({ originalUrl: url.originalUrl }, { $set: { hitCounter: url.hitCounter + 1 } });
+                    return {
+                        IsExpired: false,
+                        url: url.originalUrl
+                    }
+                }
+            } else
+                return {
+                    IsNotFoundStatus: true,
+                    IsExpired: false,
+                    url: null
+                }
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
 }

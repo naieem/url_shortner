@@ -6,22 +6,24 @@ import {
   BadRequestException,
   UseGuards,
   Param,
+  Res,
+  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { ResponseResults } from '../dtos/response.dto';
 import { CreateShortCodeDTO } from '../dtos/shortcode.dto';
 import { UrlService } from '../services/url_shortner.service';
-import { Url } from '../schema/url.schema';
-import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateShortUrlResponseDto, GetAllUrlsDto } from '../../utils/swagger.dtos';
 import { TokenAuthGuard } from '../guard/token.auth.guard';
+import { IUrlRedirectionResponse } from '../dtos/response.interface';
+import { Response } from 'express';
 
 @ApiTags('Url Shortner Controller')
 @Controller()
 export class UrlShortnerController {
   constructor(
-    private urlService: UrlService,
-    private configService: ConfigService,
+    private urlService: UrlService
   ) { }
 
   /**
@@ -40,12 +42,13 @@ export class UrlShortnerController {
     type: CreateShortUrlResponseDto,
   })
   @Post('/createshorturl')
+  @HttpCode(200)
   async createShortUrl(@Body() urlsPayload: CreateShortCodeDTO): Promise<ResponseResults> {
     try {
-      const shortUrl = await this.urlService.createShortUrl<Url>(urlsPayload);
+      const urlInfo = await this.urlService.createShortUrl(urlsPayload);
       return {
         isValid: true,
-        result: this.configService.get('BASE_URL') + shortUrl.shortCode,
+        result: urlInfo,
       };
     } catch (error: any) {
       throw new BadRequestException(error.message);
@@ -67,6 +70,7 @@ export class UrlShortnerController {
   })
   @Post('/getallUrls')
   @UseGuards(TokenAuthGuard)
+  @HttpCode(200)
   async getAllUrls(): Promise<ResponseResults> {
     try {
       const shortUrls = await this.urlService.getAllShortUrl();
@@ -78,14 +82,21 @@ export class UrlShortnerController {
       throw new BadRequestException(error);
     }
   }
-  @Post(':shortCode')
-  async shortCodeVisit(@Param() params): Promise<ResponseResults | any> {
+  @ApiOperation({
+    summary: 'Redirection url for shortcodes',
+    description: 'Redirects to the original url after succesfull validation',
+  })
+  @Get(':shortCode')
+  async shortCodeVisit(@Res() response: Response, @Param() params: { shortCode: string; }): Promise<any> {
     try {
-      const shortUrls = await this.urlService.getAllShortUrl();
-      return {
-        isValid: true,
-        result: shortUrls,
-      };
+      const redirectionUrl: IUrlRedirectionResponse = await this.urlService.getFullUrlFromShortCode(params.shortCode);
+      if(redirectionUrl && redirectionUrl?.IsNotFoundStatus) {
+        response.status(HttpStatus.NOT_FOUND).send({})
+      }else if (redirectionUrl && !redirectionUrl.IsExpired) {
+        response.redirect(302, redirectionUrl.url)
+      } else {
+        response.status(HttpStatus.GONE).send({})
+      }
     } catch (error) {
       throw new BadRequestException(error);
     }
