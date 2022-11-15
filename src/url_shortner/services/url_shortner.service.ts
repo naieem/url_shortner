@@ -28,7 +28,7 @@ export class UrlService {
     }
 
     /**
-     * Handler for creating shortUrl from Original Url
+     * Handler for retriving all the urls information
      * @param payload 
      * @returns 
      */
