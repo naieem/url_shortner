@@ -4,6 +4,7 @@ import {
   Post,
   Get,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { ResponseResults } from '../dtos/response.dto';
 import { CreateShortCodeDTO } from '../dtos/shortcode.dto';
@@ -12,6 +13,7 @@ import { Url } from '../schema/url.schema';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateShortUrlResponseDto, GetAllUrlsDto } from '../../utils/swagger.dtos';
+import { TokenAuthGuard } from '../guard/token.auth.guard';
 
 @ApiTags('Url Shortner Controller')
 @Controller()
@@ -65,6 +67,7 @@ export class UrlShortnerController {
     type: GetAllUrlsDto,
   })
   @Post('/getallUrls')
+  @UseGuards(TokenAuthGuard)
   async getAllUrls(): Promise<ResponseResults> {
     try {
       const shortUrls = await this.urlService.getAllShortUrl();
