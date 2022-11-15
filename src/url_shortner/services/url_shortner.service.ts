@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Url } from '../schema/url.schema';
+import { Url, UrlQueriableFields } from '../schema/url.schema';
 import { CreateShortCodeDTO } from '../dtos/shortcode.dto';
 import { TERMS } from 'src/utils/constants';
 
@@ -22,6 +22,19 @@ export class UrlService {
             }
             const url: TYPO | any = await this.urlModel.create(payload);
             return url;
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    /**
+     * Handler for creating shortUrl from Original Url
+     * @param payload 
+     * @returns 
+     */
+    async getAllShortUrl(): Promise<Url[]> {
+        try {
+            return await this.urlModel.find().select(UrlQueriableFields).exec();
         } catch (error) {
             throw new Error(error);
         }
