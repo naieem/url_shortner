@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, ForbiddenException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TERMS } from 'src/utils/constants';
 import { UserTokenDTO } from 'src/utils/user.seed';
@@ -21,19 +21,14 @@ export class TokenAuthGuard implements CanActivate {
                 }) as UserTokenDTO;
                 const roleFromSso = decodedSsoToken?.roles;
                 if (!roleFromSso || !roleFromSso.length || !roleFromSso.includes(TERMS.ROLE_SUPER_ADMIN)) {
-                    throw new HttpException({
-                        status: HttpStatus.FORBIDDEN,
-                        error: "Forbidden"
-                    }, 403);
+                    throw new ForbiddenException(TERMS.FORBIDDEN_TEXT);
                 }
                 return true;
             } else {
-                throw new HttpException({
-                    status: HttpStatus.UNAUTHORIZED
-                }, 401);
+                throw new UnauthorizedException(TERMS.UNAUTHORIZED_TEXT);
             }
         } catch (error) {
-            throw new HttpException(error, 403);
+            throw new HttpException(error, HttpStatus.UNAUTHORIZED);
         }
     }
 }
