@@ -13,7 +13,7 @@ export class Url {
     shortCode: string;
 
     @Prop({ required: false })
-    expiryDate: string;
+    expiryDate: Date;
 
     @Prop({ required: false, default: 0 })
     hitCounter: number;
