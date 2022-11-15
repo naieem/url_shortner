@@ -3,7 +3,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { UserSeedDTO } from '../../utils/user.seed';
+import { UserTokenDTO } from '../../utils/user.seed';
 @Injectable()
 export class TokenService {
     constructor(
@@ -11,11 +11,11 @@ export class TokenService {
         private configService: ConfigService,
     ) { }
 
-    public async signToken(payload: UserSeedDTO): Promise<{ token: string }> {
+    public async signToken(payload: UserTokenDTO): Promise<{ token: string }> {
         return new Promise(async (resolve, reject) => {
             try {
                 const jwt = await this.jwtService.signAsync(payload, {
-                    issuer: "YPB",
+                    issuer: this.configService.get("TOKEN_ISSUER"),
                     audience: this.configService.get("BASE_URL")
                 });
                 resolve({ token: jwt });
