@@ -5,6 +5,7 @@ import {
   Get,
   BadRequestException,
   UseGuards,
+  Param,
 } from '@nestjs/common';
 import { ResponseResults } from '../dtos/response.dto';
 import { CreateShortCodeDTO } from '../dtos/shortcode.dto';
@@ -46,8 +47,8 @@ export class UrlShortnerController {
         isValid: true,
         result: this.configService.get('BASE_URL') + shortUrl.shortCode,
       };
-    } catch (error) {
-      throw new BadRequestException(error);
+    } catch (error: any) {
+      throw new BadRequestException(error.message);
     }
   }
   /**
@@ -67,6 +68,18 @@ export class UrlShortnerController {
   @Post('/getallUrls')
   @UseGuards(TokenAuthGuard)
   async getAllUrls(): Promise<ResponseResults> {
+    try {
+      const shortUrls = await this.urlService.getAllShortUrl();
+      return {
+        isValid: true,
+        result: shortUrls,
+      };
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+  @Post(':shortCode')
+  async shortCodeVisit(@Param() params): Promise<ResponseResults | any> {
     try {
       const shortUrls = await this.urlService.getAllShortUrl();
       return {
