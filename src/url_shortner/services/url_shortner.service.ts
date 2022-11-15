@@ -1,5 +1,5 @@
 import { Model } from 'mongoose';
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Url, UrlQueriableFields } from '../schema/url.schema';
 import { CreateShortCodeDTO } from '../dtos/shortcode.dto';
@@ -8,14 +8,15 @@ import { ConfigService } from '@nestjs/config';
 import { ICreateShorturlResponse, IUrlRedirectionResponse } from '../dtos/response.interface';
 
 
+
 @Injectable()
 export class UrlService {
     constructor(@InjectModel(Url.name) private readonly urlModel: Model<Url>, private configService: ConfigService) { }
 
     /**
      * Handler for creating shortUrl from Original Url
-     * @param payload 
-     * @returns 
+     * @param  {CreateShortCodeDTO} payload
+     * @returns Promise {@link ICreateShorturlResponse }
      */
     async createShortUrl(payload: CreateShortCodeDTO): Promise<ICreateShorturlResponse | string> {
         try {
@@ -41,8 +42,7 @@ export class UrlService {
 
     /**
      * Handler for retriving all the urls information
-     * @param payload 
-     * @returns 
+     * @returns Promise - {@link Url} array
      */
     async getAllShortUrl(): Promise<Url[]> {
         try {
@@ -51,6 +51,11 @@ export class UrlService {
             throw new Error(error);
         }
     }
+    /**
+     * hanlder for the endpoint which visits tinyurl
+     * @param {string} code bsghdcsdfkd
+     * @returns  Promise - {@link IUrlRedirectionResponse} object
+     */
     async getFullUrlFromShortCode(code: string): Promise<IUrlRedirectionResponse> {
         try {
             const today = new Date();

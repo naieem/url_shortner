@@ -26,11 +26,6 @@ export class UrlShortnerController {
     private urlService: UrlService
   ) { }
 
-  /**
-   * Create short url for long urls
-   * @param urlsPayload
-   * @returns
-   */
   @ApiOperation({
     summary: 'Create Short url',
     description:
@@ -54,11 +49,7 @@ export class UrlShortnerController {
       throw new BadRequestException(error.message);
     }
   }
-  /**
-   * Create short url for long urls
-   * @param urlsPayload
-   * @returns
-   */
+
   @ApiOperation({
     summary: 'Get all url (Admin endpoint)',
     description: 'Returns all the short urls from db.',
@@ -90,9 +81,9 @@ export class UrlShortnerController {
   async shortCodeVisit(@Res() response: Response, @Param() params: { shortCode: string; }): Promise<any> {
     try {
       const redirectionUrl: IUrlRedirectionResponse = await this.urlService.getFullUrlFromShortCode(params.shortCode);
-      if(redirectionUrl && redirectionUrl?.IsNotFoundStatus) {
+      if (redirectionUrl && redirectionUrl?.IsNotFoundStatus) {
         response.status(HttpStatus.NOT_FOUND).send({})
-      }else if (redirectionUrl && !redirectionUrl.IsExpired) {
+      } else if (redirectionUrl && !redirectionUrl.IsExpired) {
         response.redirect(302, redirectionUrl.url)
       } else {
         response.status(HttpStatus.GONE).send({})
