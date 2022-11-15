@@ -1,8 +1,21 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 
-class Token{
+class Token {
     @ApiProperty()
-    token:string;
+    token: string;
+}
+class Urls {
+    @ApiProperty()
+    originalUrl: string;
+
+    @ApiProperty()
+    expiryDate: Date;
+
+    @ApiProperty()
+    shortCode: string;
+
+    @ApiProperty()
+    hitCounter: Number;
 }
 export class GlobalResponseDto {
     @ApiProperty()
@@ -12,15 +25,23 @@ export class GlobalResponseDto {
 }
 export class CreateShortUrlResponseDto extends GlobalResponseDto {
     @ApiProperty({
-        type:String,
-        description:'Short url for the original long url'
+        type: String,
+        description: 'Short url for the original long url',
     })
     data: string;
 }
 
 export class SuperAdminTokenGenerationResponseDto extends GlobalResponseDto {
     @ApiProperty({
-        type:Token
+        type: Token,
     })
     data: Token;
+}
+
+export class GetAllUrlsDto extends GlobalResponseDto {
+    @ApiProperty({
+        type: Urls,
+        isArray: true
+    })
+    data: Urls;
 }
