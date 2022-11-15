@@ -21,7 +21,7 @@ export class UrlShortnerController {
   constructor(
     private urlService: UrlService,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   /**
    * Create short url for long urls
@@ -39,9 +39,7 @@ export class UrlShortnerController {
     type: CreateShortUrlResponseDto,
   })
   @Post('/createshorturl')
-  async createShortUrl(
-    @Body() urlsPayload: CreateShortCodeDTO,
-  ): Promise<ResponseResults> {
+  async createShortUrl(@Body() urlsPayload: CreateShortCodeDTO): Promise<ResponseResults> {
     try {
       const shortUrl = await this.urlService.createShortUrl<Url>(urlsPayload);
       return {
@@ -58,7 +56,7 @@ export class UrlShortnerController {
    * @returns
    */
   @ApiOperation({
-    summary: 'Get all url',
+    summary: 'Get all url (Admin endpoint)',
     description: 'Returns all the short urls from db.',
   })
   @ApiResponse({

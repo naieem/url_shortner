@@ -4,5 +4,6 @@ export const TERMS = {
     'NOT_FOUND_URL':'Sorry Url not found.',
     'ROLE_SUPER_ADMIN':'super-admin',
     'UNAUTHORIZED_TEXT':'You are not authrized.',
-    'FORBIDDEN_TEXT':'You are forbidden to see this.'
+    'FORBIDDEN_TEXT':'You are forbidden to see this.',
+    'INVALID_URL':'Url not valid'
 }
