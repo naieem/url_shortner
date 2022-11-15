@@ -19,7 +19,7 @@ export class Url {
     hitCounter: number;
 
 }
-export const UrlQueriableFields = ['originalUrl', 'shortCode', 'expiryDate'];
+export const UrlQueriableFields = ['originalUrl', 'shortCode', 'expiryDate','hitCounter'];
 export const UrlSchema = SchemaFactory.createForClass(Url)
 
 export type UrlDocument = Url & Document
