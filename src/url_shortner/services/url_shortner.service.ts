@@ -16,6 +16,11 @@ export class UrlService {
      */
     async createShortUrl<TYPO>(payload: CreateShortCodeDTO): Promise<TYPO> {
         try {
+            const urlRegex = /https?:\/{2}([a-zA-Z1-9])+.[a-zA-Z]{2,4}$/gi;
+            const matches = payload.originalUrl.match(urlRegex);
+            if (!matches) {
+                throw new Error(TERMS.INVALID_URL);
+            }
             const existingUrls = await this.urlModel.find({ originalUrl: payload.originalUrl })
             if (existingUrls && existingUrls.length) {
                 throw new Error(TERMS.EXISTING_URL);
@@ -39,4 +44,11 @@ export class UrlService {
             throw new Error(error);
         }
     }
+    // async getFullUrlFromShortCode(code: string): Promise<Url[]> {
+    //     try {
+    //         return await this.urlModel.find().select(UrlQueriableFields).exec();
+    //     } catch (error) {
+    //         throw new Error(error);
+    //     }
+    // }
 }
