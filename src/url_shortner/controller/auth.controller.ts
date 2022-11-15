@@ -2,7 +2,7 @@ import {
     Controller,Post
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ApiBearerAuth, ApiCookieAuth, ApiExcludeEndpoint, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TokenService } from '../services/token.service';
 import { UserSeedData } from '../../utils/user.seed';
 import { ResponseResults } from '../dtos/response.dto';
