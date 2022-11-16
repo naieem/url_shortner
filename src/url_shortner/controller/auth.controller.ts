@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { ApiBearerAuth, ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TokenService } from '../services/token.service';
 import { UserSeedData } from '../../utils/user.seed';
-import { ResponseResults } from '../dtos';
+import { IResponseResults } from '../dtos';
 import { SuperAdminTokenGenerationResponseDto } from '../../utils/swagger.dtos';
 
 @ApiCookieAuth()
@@ -33,7 +33,7 @@ export class AuthController {
      * token singin for super admin use case
      * @returns {@link ResponseResults} object
      */
-    async singInTokenForSuperadmin(): Promise<ResponseResults> {
+    async singInTokenForSuperadmin(): Promise<IResponseResults> {
         try {
             const user = UserSeedData;
             const { token } = await this.tokenService.signToken(user);

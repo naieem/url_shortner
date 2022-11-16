@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Url, UrlQueriableFields } from '../schema/url.schema';
 import { queryMaker, TERMS, urlValidator } from 'src/utils/constants';
 import { ConfigService } from '@nestjs/config';
-import { ICreateShorturlResponse, IUrlRedirectionResponse, CreateShortCodeDTO, UrlFilterDTO, IUrlFilter } from '../dtos';
+import { ICreateShorturlResponse, IUrlRedirectionResponse, CreateShortCodeDTO, UrlFilterDTO, IUrlFilter, IAllUrlResponseResult, IUrlResponse } from '../dtos';
 
 
 @Injectable()
@@ -40,12 +40,18 @@ export class UrlService {
     /**
      * Handler for retriving all the urls information
      * @param options {@link UrlFilterDTO} object
-     * @returns Promise - {@link Url} array
+     * @returns Promise - {@link IUrlResponse} object
      */
-    async getAllShortUrl(options: UrlFilterDTO): Promise<Url[]> {
+    async getAllShortUrl(options: UrlFilterDTO): Promise<IUrlResponse> {
         try {
             const query = queryMaker(options);
-            return await this.urlModel.find(query).select(UrlQueriableFields).exec();
+            const totalCount = await this.urlModel.estimatedDocumentCount();
+            const urls = await this.urlModel.find(query).select(UrlQueriableFields).exec();
+            return {
+                urls: urls,
+                resultCount: urls.length,
+                totalCount: totalCount
+            }
         } catch (error) {
             throw new Error(error);
         }

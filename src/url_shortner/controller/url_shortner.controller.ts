@@ -11,7 +11,7 @@ import {
   HttpCode,
   Delete,
 } from '@nestjs/common';
-import { RemoveUrlDTO, ResponseResults, CreateShortCodeDTO, IUrlRedirectionResponse, UrlFilterDTO, AllUrlResponseResult } from '../dtos';
+import { RemoveUrlDTO, IResponseResults, CreateShortCodeDTO, IUrlRedirectionResponse, UrlFilterDTO, IAllUrlResponseResult } from '../dtos';
 import { UrlService } from '../services/url_shortner.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateShortUrlResponseDto, GetAllUrlsDto, GlobalResponseDto } from '../../utils/swagger.dtos';
@@ -42,7 +42,7 @@ export class UrlShortnerController {
   })
   @Post('/createshorturl')
   @HttpCode(200)
-  async createShortUrl(@Body() urlsPayload: CreateShortCodeDTO): Promise<ResponseResults> {
+  async createShortUrl(@Body() urlsPayload: CreateShortCodeDTO): Promise<IResponseResults> {
     try {
       const urlInfo = await this.urlService.createShortUrl(urlsPayload);
       return {
@@ -70,15 +70,12 @@ export class UrlShortnerController {
   @Post('/getallUrls')
   @UseGuards(TokenAuthGuard)
   @HttpCode(200)
-  async getAllUrls(@Body() filter?: UrlFilterDTO): Promise<AllUrlResponseResult> {
+  async getAllUrls(@Body() filter?: UrlFilterDTO): Promise<IAllUrlResponseResult> {
     try {
       const shortUrls = await this.urlService.getAllShortUrl(filter);
       return {
         isValid: true,
-        result: {
-          urls: shortUrls,
-          count: shortUrls.length
-        }
+        result: shortUrls
       };
     } catch (error) {
       throw new BadRequestException(error);
@@ -146,7 +143,7 @@ export class UrlShortnerController {
   @Delete('/deleteUrl')
   @UseGuards(TokenAuthGuard)
   @HttpCode(200)
-  async deleteShrtUrl(@Body() urlBody: RemoveUrlDTO): Promise<ResponseResults> {
+  async deleteShrtUrl(@Body() urlBody: RemoveUrlDTO): Promise<IResponseResults> {
     try {
       const removeResponse = await this.urlService.removeUrlFromDb(urlBody.originalUrl);
       return {
