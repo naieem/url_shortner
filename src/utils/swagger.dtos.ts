@@ -17,6 +17,15 @@ class Urls {
     @ApiProperty()
     hitCounter: Number;
 }
+class AllUrlsData {
+    @ApiProperty({
+        type: Urls,
+        isArray: true
+    })
+    urls: Urls[];
+    @ApiProperty()
+    count: number
+}
 export class GlobalResponseDto {
     @ApiProperty()
     success: boolean;
@@ -40,8 +49,7 @@ export class SuperAdminTokenGenerationResponseDto extends GlobalResponseDto {
 
 export class GetAllUrlsDto extends GlobalResponseDto {
     @ApiProperty({
-        type: Urls,
-        isArray: true
+        type: AllUrlsData
     })
-    data: Urls;
+    data: AllUrlsData;
 }
