@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { ApiBearerAuth, ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TokenService } from '../services/token.service';
 import { UserSeedData } from '../../utils/user.seed';
-import { ResponseResults } from '../dtos/response.dto';
+import { ResponseResults } from '../dtos';
 import { SuperAdminTokenGenerationResponseDto } from '../../utils/swagger.dtos';
 
 @ApiCookieAuth()
