@@ -1,3 +1,13 @@
+import { IUrlFilter, UrlFilterDTO } from "../url_shortner/dtos";
+
+interface IConditions {
+    [key: string]: Object
+}
+interface IQueryMaker {
+    query: {
+        $or: IConditions[]
+    }
+}
 export const TERMS = {
     'EXISTING_URL': 'Url already exists.',
     'EXPIRED_URL': 'Sorry Url got expired.',
@@ -7,6 +17,11 @@ export const TERMS = {
     'FORBIDDEN_TEXT': 'You are forbidden to see this.',
     'INVALID_URL': 'Url not valid'
 }
+/**
+ * Url validator function for using globally throughout the application
+ * @param  {string} url
+ * @returns string array
+ */
 export const urlValidator = (url: string): string[] => {
     try {
         const urlRegex = /https?:\/{2}([a-zA-Z1-9])+.[a-zA-Z]{2,4}$/gi;
@@ -15,4 +30,35 @@ export const urlValidator = (url: string): string[] => {
     } catch (error) {
         throw new Error(error);
     }
+}
+/**
+ * Organis query format for mongod query when all urls call
+ * @param  options {@link UrlFilterDTO} object
+ * @returns IQueryMaker {@link IQueryMaker} object
+ */
+export const queryMaker = (options: UrlFilterDTO): {} | IQueryMaker => {
+    let filter: IUrlFilter = {}
+    let query = {}
+    let condition = [];
+
+    options.shortCode ? filter.shortCode = options.shortCode : null;
+    options.keyword ? filter.originalUrl = {
+        $regex: options.keyword,
+        $options: 'i'
+    } : null;
+    if (filter && Object.keys(filter).length) {
+        for (const key in filter) {
+            if (filter[key]) {
+                condition.push({
+                    [key]: filter[key]
+                })
+            }
+        }
+    }
+    if (condition && condition.length) {
+        query = {
+            $or: condition
+        }
+    }
+    return query
 }
