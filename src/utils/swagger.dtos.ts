@@ -24,7 +24,9 @@ class AllUrlsData {
     })
     urls: Urls[];
     @ApiProperty()
-    count: number
+    resultCount: number;
+    @ApiProperty()
+    totalCount: number;
 }
 export class GlobalResponseDto {
     @ApiProperty()

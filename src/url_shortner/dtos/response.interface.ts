@@ -14,17 +14,19 @@ export interface IUrlRedirectionResponse {
     url: string;
     IsNotFoundStatus?: boolean;
 }
-export interface ResponseResults {
+export interface IResponseResults {
     result: any;
     isValid: boolean;
 }
-export interface AllUrlResponseResult extends ResponseResults {
-    result: {
-        urls: Url[],
-        count: number
-    };
+export interface IAllUrlResponseResult extends IResponseResults {
+    result: IUrlResponse;
 }
 export interface IUrlFilter {
     shortCode?: string;
     originalUrl?: any;
+}
+export interface IUrlResponse {
+    urls: Url[];
+    resultCount: number;
+    totalCount: number;
 }
