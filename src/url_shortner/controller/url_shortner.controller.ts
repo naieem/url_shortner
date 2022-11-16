@@ -11,13 +11,11 @@ import {
   HttpCode,
   Delete,
 } from '@nestjs/common';
-import { RemoveUrlDTO, ResponseResults } from '../dtos';
-import { CreateShortCodeDTO } from '../dtos/shortcode.dto';
+import { RemoveUrlDTO, ResponseResults, CreateShortCodeDTO, IUrlRedirectionResponse } from '../dtos';
 import { UrlService } from '../services/url_shortner.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateShortUrlResponseDto, GetAllUrlsDto, GlobalResponseDto } from '../../utils/swagger.dtos';
 import { TokenAuthGuard } from '../guard/token.auth.guard';
-import { IUrlRedirectionResponse } from '../dtos/response.interface';
 import { Response } from 'express';
 import { TERMS } from '../../utils/constants';
 

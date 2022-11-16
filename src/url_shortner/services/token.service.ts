@@ -10,7 +10,12 @@ export class TokenService {
         private jwtService: JwtService,
         private configService: ConfigService,
     ) { }
-
+    
+    /**
+     * Handler for signing token for admin use
+     * @param  payload {@link UserTokenDTO} object
+     * @returns string
+     */
     public async signToken(payload: UserTokenDTO): Promise<{ token: string }> {
         return new Promise(async (resolve, reject) => {
             try {

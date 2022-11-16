@@ -11,7 +11,6 @@ export class TokenAuthGuard implements CanActivate {
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
-        const issuer = this.configService.get('TOKEN_ISSUER');
         try {
             const ssoToken = request.headers['x-auth-token'] || '';
             if (ssoToken) {
