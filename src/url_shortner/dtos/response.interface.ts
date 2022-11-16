@@ -8,3 +8,7 @@ export interface IUrlRedirectionResponse {
     url: string;
     IsNotFoundStatus?: boolean;
 }
+export interface ResponseResults {
+    result: any;
+    isValid: boolean;
+}
