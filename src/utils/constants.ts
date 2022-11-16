@@ -22,11 +22,11 @@ export const TERMS = {
  * @param  {string} url
  * @returns string array
  */
-export const urlValidator = (url: string): string[] => {
+export const urlValidator = (url: string): boolean => {
     try {
         const urlRegex = /https?:\/{2}([a-zA-Z1-9])+.[a-zA-Z]{2,4}$/gi;
         const matches = url.match(urlRegex);
-        return matches;
+        return matches && matches.length ? true : false;
     } catch (error) {
         throw new Error(error);
     }

@@ -18,8 +18,8 @@ export class UrlService {
      */
     async createShortUrl(payload: CreateShortCodeDTO): Promise<ICreateShorturlResponse | string> {
         try {
-            const matches = urlValidator(payload.originalUrl);
-            if (!matches) {
+            const isValid = urlValidator(payload.originalUrl);
+            if (!isValid) {
                 throw new Error(TERMS.INVALID_URL);
             }
             const existingUrls: Url = await this.urlModel.findOne({ originalUrl: payload.originalUrl })
@@ -98,8 +98,8 @@ export class UrlService {
      */
     async removeUrlFromDb(originalUrl: string): Promise<any> {
         try {
-            const matches = urlValidator(originalUrl);
-            if (!matches) {
+            const isValid = urlValidator(originalUrl);
+            if (!isValid) {
                 throw new Error(TERMS.INVALID_URL);
             }
             return await this.urlModel.deleteOne({ originalUrl: originalUrl });
