@@ -9,12 +9,13 @@ import {
   Res,
   HttpStatus,
   HttpCode,
+  Delete,
 } from '@nestjs/common';
-import { ResponseResults } from '../dtos/response.dto';
+import { RemoveUrlDTO, ResponseResults } from '../dtos';
 import { CreateShortCodeDTO } from '../dtos/shortcode.dto';
 import { UrlService } from '../services/url_shortner.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateShortUrlResponseDto, GetAllUrlsDto } from '../../utils/swagger.dtos';
+import { CreateShortUrlResponseDto, GetAllUrlsDto, GlobalResponseDto } from '../../utils/swagger.dtos';
 import { TokenAuthGuard } from '../guard/token.auth.guard';
 import { IUrlRedirectionResponse } from '../dtos/response.interface';
 import { Response } from 'express';
@@ -56,7 +57,7 @@ export class UrlShortnerController {
   })
   @ApiResponse({
     status: 200,
-    description: 'Returns all the short urls.',
+    description: 'Returns all the urls.',
     type: GetAllUrlsDto,
   })
   @Post('/getallUrls')
@@ -73,6 +74,7 @@ export class UrlShortnerController {
       throw new BadRequestException(error);
     }
   }
+
   @ApiOperation({
     summary: 'Redirection url for shortcodes',
     description: 'Redirects to the original url after succesfull validation',
@@ -90,6 +92,30 @@ export class UrlShortnerController {
       }
     } catch (error) {
       throw new BadRequestException(error);
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Delete url (Admin endpoint)',
+    description: 'Delete urls from db.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns acknowledged data after deletion',
+    type: GlobalResponseDto,
+  })
+  @Delete('/deleteUrl')
+  @UseGuards(TokenAuthGuard)
+  @HttpCode(200)
+  async deleteShrtUrl(@Body() urlBody: RemoveUrlDTO): Promise<ResponseResults> {
+    try {
+      const removeResponse = await this.urlService.removeUrlFromDb(urlBody.originalUrl);
+      return {
+        isValid: true,
+        result: removeResponse,
+      };
+    } catch (error:any) {
+      throw new BadRequestException(error.message);
     }
   }
 }

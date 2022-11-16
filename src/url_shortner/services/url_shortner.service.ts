@@ -3,10 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Url, UrlQueriableFields } from '../schema/url.schema';
 import { CreateShortCodeDTO } from '../dtos/shortcode.dto';
-import { TERMS } from 'src/utils/constants';
+import { TERMS, urlValidator } from 'src/utils/constants';
 import { ConfigService } from '@nestjs/config';
 import { ICreateShorturlResponse, IUrlRedirectionResponse } from '../dtos/response.interface';
-
 
 
 @Injectable()
@@ -20,8 +19,7 @@ export class UrlService {
      */
     async createShortUrl(payload: CreateShortCodeDTO): Promise<ICreateShorturlResponse | string> {
         try {
-            const urlRegex = /https?:\/{2}([a-zA-Z1-9])+.[a-zA-Z]{2,4}$/gi;
-            const matches = payload.originalUrl.match(urlRegex);
+            const matches = urlValidator(payload.originalUrl);
             if (!matches) {
                 throw new Error(TERMS.INVALID_URL);
             }
@@ -82,6 +80,22 @@ export class UrlService {
                     IsExpired: false,
                     url: null
                 }
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+    /**
+     * Remove url from database
+     * @param  {string} originalUrl
+     * @returns Promise - any
+     */
+    async removeUrlFromDb(originalUrl: string): Promise<any> {
+        try {
+            const matches = urlValidator(originalUrl);
+            if (!matches) {
+                throw new Error(TERMS.INVALID_URL);
+            }
+            return await this.urlModel.deleteOne({ originalUrl: originalUrl });
         } catch (error) {
             throw new Error(error);
         }
