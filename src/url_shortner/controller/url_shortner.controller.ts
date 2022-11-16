@@ -19,6 +19,7 @@ import { CreateShortUrlResponseDto, GetAllUrlsDto, GlobalResponseDto } from '../
 import { TokenAuthGuard } from '../guard/token.auth.guard';
 import { IUrlRedirectionResponse } from '../dtos/response.interface';
 import { Response } from 'express';
+import { TERMS } from '../../utils/constants';
 
 @ApiTags('Url Shortner Controller')
 @Controller()
@@ -79,16 +80,37 @@ export class UrlShortnerController {
     summary: 'Redirection url for shortcodes',
     description: 'Redirects to the original url after succesfull validation',
   })
+  @ApiResponse({
+    status: 302,
+    description: 'Returns all the urls.',
+    type: GetAllUrlsDto,
+  })
+  @ApiResponse({
+    status: 410,
+    description: 'Url expired response.',
+    type: GlobalResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Url not found.',
+    type: GlobalResponseDto,
+  })
   @Get(':shortCode')
   async shortCodeVisit(@Res() response: Response, @Param() params: { shortCode: string; }): Promise<any> {
     try {
       const redirectionUrl: IUrlRedirectionResponse = await this.urlService.getFullUrlFromShortCode(params.shortCode);
       if (redirectionUrl && redirectionUrl?.IsNotFoundStatus) {
-        response.status(HttpStatus.NOT_FOUND).send({})
+        response.status(HttpStatus.NOT_FOUND).send({
+          success: false,
+          data: TERMS.NOT_FOUND_URL
+        })
       } else if (redirectionUrl && !redirectionUrl.IsExpired) {
         response.redirect(302, redirectionUrl.url)
       } else {
-        response.status(HttpStatus.GONE).send({})
+        response.status(HttpStatus.GONE).send({
+          success: false,
+          data: TERMS.EXPIRED_URL
+        })
       }
     } catch (error) {
       throw new BadRequestException(error);
@@ -114,7 +136,7 @@ export class UrlShortnerController {
         isValid: true,
         result: removeResponse,
       };
-    } catch (error:any) {
+    } catch (error: any) {
       throw new BadRequestException(error.message);
     }
   }
