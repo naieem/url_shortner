@@ -27,7 +27,11 @@ export class UrlShortnerController {
   constructor(
     private urlService: UrlService
   ) { }
-
+  // ***************
+  // url: createshorturl
+  // payload: {originalUrl,expiryDate}
+  // response: {success, data}
+  // ***************
   @ApiOperation({
     summary: 'Create Short url',
     description:
@@ -51,7 +55,11 @@ export class UrlShortnerController {
       throw new BadRequestException(error.message);
     }
   }
-
+  // ***************
+  // url: getallUrls
+  // authorization: required
+  // response: {isValid, result}
+  // ***************
   @ApiOperation({
     summary: 'Get all url (Admin endpoint)',
     description: 'Returns all the short urls from db.',
@@ -75,7 +83,11 @@ export class UrlShortnerController {
       throw new BadRequestException(error);
     }
   }
-
+  // ***************
+  // url: (:shortCode)
+  // params: {shortCode}
+  // response: {redirection, 404,410}
+  // ***************
   @ApiOperation({
     summary: 'Redirection url for shortcodes',
     description: 'Redirects to the original url after succesfull validation',
@@ -116,7 +128,11 @@ export class UrlShortnerController {
       throw new BadRequestException(error);
     }
   }
-
+  // ***************
+  // url: deleteUrl
+  // payload: {originalUrl}
+  // response: {success, data}
+  // ***************
   @ApiOperation({
     summary: 'Delete url (Admin endpoint)',
     description: 'Delete urls from db.',
