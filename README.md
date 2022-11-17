@@ -68,15 +68,18 @@ Note: There are 3 environment files included with this project.
 
 If you see the scripts of package.json file, you will see these scripts.
 ```bash
+#local
 "start:local": "cross-env NODE_ENV=local nest start --watch"
 ```
 ```bash
+#dev
 "start:dev": "cross-env NODE_ENV=dev node main"
 ```
 ```bash
+#production
 "start:prod": "cross-env NODE_ENV=production node main"
 ``` 
-Those NODE_ENV variables data is aligned with those environment files.Local command is mainly for local development purpose. dev and prod commands are for using on cloud environments.
+These NODE_ENV variables data is aligned with those environment files.'local'command is mainly for local development purpose.'dev' and 'prod' commands are for using on cloud environments.
 
 ### Running the app
 
@@ -92,19 +95,17 @@ npm run start:prod
 ```
 
 ## Endpoints
-After running the code you will have all the endpoints available for making any calls. I have not included any information of the endpoints seperately here as ther are already properly documented in the SWAGGER link. You can just go to the browser and get all of them using.
+After running the code you will have all the endpoints available for making the api calls. I have not included any information of the endpoints seperately here as they are already properly documented in the SWAGGER link. After running the project, you can just go to the browser and get all of them using the link.
 ```bash
 http://yourdomain/api/docs
 ```
 
 ## Test
+I have only added unit test for the project.
 
 ```bash
 # unit tests
 $ npm run test
-
-# e2e tests
-$ npm run test:e2e
 
 # test coverage
 $ npm run test:cov
@@ -113,11 +114,11 @@ $ npm run test:cov
 
 
 ## Important notice
-For the admin endpoints you need to add an extra header named 'x-auth-token'. 
+For the admin endpoints you need to add an extra header named 'x-auth-token'. Otherwise it won't work.
 ### How to get 'x-auth-token' token?
 You can get that token from the endpoint 
 ```bash
-/auth/token/super-admin/sign
+http://yourdomain/auth/token/super-admin/sign
 ```
 This endpoint is a part of Auth controller. This can be easily get from the swagger documentation.
 ### How to add the token to header?
