@@ -13,4 +13,8 @@ export class CreateShortCodeDTO {
     @IsNotEmpty()
     @IsString()
     expiryDate: Date;
+
+    @IsNotEmpty()
+    @IsString()
+    shortCode?: String;
 }

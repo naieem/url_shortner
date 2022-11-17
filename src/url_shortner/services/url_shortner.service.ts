@@ -5,6 +5,7 @@ import { Url, UrlQueriableFields } from '../schema/url.schema';
 import { queryMaker, TERMS, urlValidator } from '../../utils/constants';
 import { ConfigService } from '@nestjs/config';
 import { ICreateShorturlResponse, IUrlRedirectionResponse, CreateShortCodeDTO, UrlFilterDTO, IUrlFilter, IAllUrlResponseResult, IUrlResponse } from '../dtos';
+import { nanoid } from 'nanoid';
 
 
 @Injectable()
@@ -32,6 +33,7 @@ export class UrlService {
                     expiration: existingUrls.expiryDate
                 }
             }
+            payload.shortCode = nanoid();
             const url: Url = await this.urlModel.create(payload);
             return this.configService.get('BASE_URL') + url.shortCode;
         } catch (error) {
