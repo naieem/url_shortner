@@ -12,9 +12,9 @@
     "start:local": "cross-env NODE_ENV=local nest start --watch",
     "start:dev": "cross-env NODE_ENV=dev node main",
     "start:prod": "cross-env NODE_ENV=prod node main",
-    "test": "jest",
+    "test": "cross-env NODE_ENV=local jest",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
+    "test:cov": "cross-env NODE_ENV=local jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
