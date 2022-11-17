@@ -1,11 +1,10 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { connect, connection, disconnect } from 'mongoose';
+import { connect, connection } from 'mongoose';
 import { TERMS } from '../../utils/constants';
 import { UrlShortnerController } from '../controller/url_shortner.controller';
-import { IResponseResults } from '../dtos';
-import { Url } from '../schema/url.schema';
+import { IResponseResults, IUrlResponse } from '../dtos';
 import { UrlService } from '../services/url_shortner.service';
 import { UrlShortnerModule } from '../url_shortner.module';
 
@@ -43,8 +42,10 @@ describe('Urlshortner Module', () => {
     afterAll(async () => {
         connection.dropDatabase();
     });
-
-    describe('Controller Test', () => {
+    /**
+     * Controller testing
+     */
+    describe('UrlShortnerController', () => {
         describe('createshorturl endpoint testing', () => {
             // it('truthy value', () => {
             //     expect(urlService.sayhello()).toBe('hellp');
@@ -66,7 +67,7 @@ describe('Urlshortner Module', () => {
                     "expiryDate": new Date("2022-11-17T06:49:48.010Z")
                 })
                 expect(info.isValid).toBeTruthy();
-                expect(info.result).toMatch(new RegExp(TERMS.REGEX_URL_VALIDATION_LOCAL_TEST,'i'));
+                expect(info.result).toMatch(new RegExp(TERMS.REGEX_URL_VALIDATION_LOCAL_TEST, 'i'));
             });
             it('With duplicate url', async () => {
                 const info: IResponseResults = await shortnerController.createShortUrl({
@@ -75,6 +76,41 @@ describe('Urlshortner Module', () => {
                 })
                 expect(info.result.message).toBe(TERMS.EXISTING_URL);
             });
+        });
+    });
+    /**
+     * Service test
+     */
+    describe('UrlShortnerService', () => {
+        describe('UrlShortnerService testing', () => {
+            it('get all url', async () => {
+                try {
+                    await urlService.createShortUrl({
+                        "originalUrl": "http://googletest.vom",
+                        "expiryDate": new Date("2022-11-17T06:49:48.010Z")
+                    })
+                    const info: IUrlResponse = await urlService.getAllShortUrl()
+                    expect(info.resultCount).toBe(2)
+                } catch (error: any) {
+                    console.log(error)
+                }
+            });
+            // it('With Valid url', async () => {
+            //     expect.assertions(2);
+            //     const info: IResponseResults = await shortnerController.createShortUrl({
+            //         "originalUrl": "http://google.vom",
+            //         "expiryDate": new Date("2022-11-17T06:49:48.010Z")
+            //     })
+            //     expect(info.isValid).toBeTruthy();
+            //     expect(info.result).toMatch(new RegExp(TERMS.REGEX_URL_VALIDATION_LOCAL_TEST, 'i'));
+            // });
+            // it('With duplicate url', async () => {
+            //     const info: IResponseResults = await shortnerController.createShortUrl({
+            //         "originalUrl": "http://google.vom",
+            //         "expiryDate": new Date("2022-11-17T06:49:48.010Z")
+            //     })
+            //     expect(info.result.message).toBe(TERMS.EXISTING_URL);
+            // });
         });
     });
 });
