@@ -15,8 +15,9 @@ export const TERMS = {
     'ROLE_SUPER_ADMIN': 'super-admin',
     'UNAUTHORIZED_TEXT': 'You are not authorized.',
     'FORBIDDEN_TEXT': 'You are forbidden to see this.',
-    'INVALID_URL': 'Url not valid',
-    'REGEX_URL_VALIDATION_LOCAL_TEST':'https?:\/{2}([a-zA-Z1-9])+:[0-9]{4}\/[a-zA-Z\w\d_]+'
+    'INVALID_URL': 'Url not valid.',
+    'DATE_EXPIRED':'Provided expiry date should be future date.',
+    'REGEX_URL_VALIDATION_LOCAL_TEST': 'https?:\/{2}([a-zA-Z1-9])+:[0-9]{4}\/[a-zA-Z\w\d_]+'
 }
 /**
  * Url validator function for using globally throughout the application
@@ -31,6 +32,11 @@ export const urlValidator = (url: string): boolean => {
     } catch (error) {
         throw new Error(error);
     }
+}
+export const expiryDateValidator = (dateToValidate: Date): boolean => {
+    const today = new Date();
+    const expiryDate = new Date(dateToValidate);
+    return expiryDate < today ? true : false
 }
 /**
  * Organis query format for mongod query when all urls call

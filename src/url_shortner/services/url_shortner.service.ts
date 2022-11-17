@@ -2,7 +2,7 @@ import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Url, UrlQueriableFields } from '../schema/url.schema';
-import { queryMaker, TERMS, urlValidator } from '../../utils/constants';
+import { expiryDateValidator, queryMaker, TERMS, urlValidator } from '../../utils/constants';
 import { ConfigService } from '@nestjs/config';
 import { ICreateShorturlResponse, IUrlRedirectionResponse, CreateShortCodeDTO, UrlFilterDTO, IUrlFilter, IAllUrlResponseResult, IUrlResponse } from '../dtos';
 import { nanoid } from 'nanoid';
@@ -21,16 +21,30 @@ export class UrlService {
      */
     async createShortUrl(payload: CreateShortCodeDTO): Promise<ICreateShorturlResponse | string> {
         try {
+
             const isValid = urlValidator(payload.originalUrl);
             if (!isValid) {
                 throw new Error(TERMS.INVALID_URL);
             }
-            const existingUrls: Url = await this.urlModel.findOne({ originalUrl: payload.originalUrl })
-            if (existingUrls) {
+            const isExpired = expiryDateValidator(payload.expiryDate);
+            if (isExpired) {
+                throw new Error(TERMS.DATE_EXPIRED);
+            }
+            const existingUrl: Url = await this.urlModel.findOne({ originalUrl: payload.originalUrl })
+            const isExistingDateExpired = expiryDateValidator(existingUrl.expiryDate);
+            if (existingUrl && !isExistingDateExpired) {
                 return {
                     message: TERMS.EXISTING_URL,
-                    url: this.configService.get('BASE_URL') + existingUrls.shortCode,
-                    expiration: existingUrls.expiryDate
+                    url: this.configService.get('BASE_URL') + existingUrl.shortCode,
+                    expiration: existingUrl.expiryDate
+                }
+            } else {
+                existingUrl.expiryDate = payload.expiryDate;
+                await this.urlModel.findOneAndUpdate({ originalUrl: existingUrl.originalUrl }, existingUrl);
+                return {
+                    message: TERMS.EXISTING_URL,
+                    url: this.configService.get('BASE_URL') + existingUrl.shortCode,
+                    expiration: payload.expiryDate
                 }
             }
             payload.shortCode = nanoid();
