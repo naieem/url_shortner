@@ -10,7 +10,7 @@ import { ICreateShorturlResponse, IUrlRedirectionResponse, CreateShortCodeDTO, U
 @Injectable()
 export class UrlService {
     constructor(@InjectModel(Url.name) private readonly urlModel: Model<Url>, private configService: ConfigService) { }
-    sayhello(){
+    sayhello() {
         return 'hello';
     }
     /**
@@ -44,9 +44,9 @@ export class UrlService {
      * @param options {@link UrlFilterDTO} object
      * @returns Promise - {@link IUrlResponse} object
      */
-    async getAllShortUrl(options: UrlFilterDTO): Promise<IUrlResponse> {
+    async getAllShortUrl(options?: UrlFilterDTO): Promise<IUrlResponse> {
         try {
-            const query = queryMaker(options);
+            const query = options ? queryMaker(options) : {};
             const totalCount = await this.urlModel.estimatedDocumentCount();
             const urls = await this.urlModel.find(query).select(UrlQueriableFields).exec();
             return {
