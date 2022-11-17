@@ -28,7 +28,7 @@
 
 ## About the project
 It's a project to built a url shortner microservice which will support some functionalities like expiration time, domain blacklisting and domain clearance.
-The key features of this is, expiration timeout and blacklisting domains. This will give the admin much more controll over the service. Hope you will enjoy using it.
+The key features of this is expiration timeout and blacklisting domains. This will give the admin much more controll over the service. Hope you will enjoy using it.
 
 ## Build with
 1. Nodejs
