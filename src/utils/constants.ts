@@ -33,6 +33,11 @@ export const urlValidator = (url: string): boolean => {
         throw new Error(error);
     }
 }
+/**
+ * Checking if a date is from past or not
+ * @param  {Date} dateToValidate
+ * @returns boolean
+ */
 export const expiryDateValidator = (dateToValidate: Date): boolean => {
     const today = new Date();
     const expiryDate = new Date(dateToValidate);

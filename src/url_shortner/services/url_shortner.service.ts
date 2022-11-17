@@ -31,14 +31,14 @@ export class UrlService {
                 throw new Error(TERMS.DATE_EXPIRED);
             }
             const existingUrl: Url = await this.urlModel.findOne({ originalUrl: payload.originalUrl })
-            const isExistingDateExpired = expiryDateValidator(existingUrl.expiryDate);
+            const isExistingDateExpired = existingUrl && expiryDateValidator(existingUrl.expiryDate);
             if (existingUrl && !isExistingDateExpired) {
                 return {
                     message: TERMS.EXISTING_URL,
                     url: this.configService.get('BASE_URL') + existingUrl.shortCode,
                     expiration: existingUrl.expiryDate
                 }
-            } else {
+            } else if(existingUrl && isExistingDateExpired){
                 existingUrl.expiryDate = payload.expiryDate;
                 await this.urlModel.findOneAndUpdate({ originalUrl: existingUrl.originalUrl }, existingUrl);
                 return {
