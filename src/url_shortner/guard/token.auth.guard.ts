@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, ForbiddenException, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { TERMS } from 'src/utils/constants';
+import { TERMS } from '../../utils/constants';
 import { UserTokenDTO } from 'src/utils/user.seed';
 import { JwtService } from '@nestjs/jwt';
 

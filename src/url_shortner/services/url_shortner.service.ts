@@ -2,7 +2,7 @@ import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Url, UrlQueriableFields } from '../schema/url.schema';
-import { queryMaker, TERMS, urlValidator } from 'src/utils/constants';
+import { queryMaker, TERMS, urlValidator } from '../../utils/constants';
 import { ConfigService } from '@nestjs/config';
 import { ICreateShorturlResponse, IUrlRedirectionResponse, CreateShortCodeDTO, UrlFilterDTO, IUrlFilter, IAllUrlResponseResult, IUrlResponse } from '../dtos';
 
@@ -10,7 +10,9 @@ import { ICreateShorturlResponse, IUrlRedirectionResponse, CreateShortCodeDTO, U
 @Injectable()
 export class UrlService {
     constructor(@InjectModel(Url.name) private readonly urlModel: Model<Url>, private configService: ConfigService) { }
-
+    sayhello(){
+        return 'hello';
+    }
     /**
      * Handler for creating shortUrl from Original Url
      * @param  {CreateShortCodeDTO} payload
