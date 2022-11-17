@@ -4,13 +4,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { connect, connection } from 'mongoose';
 import { TERMS } from '../../utils/constants';
 import { UrlShortnerController } from '../controller/url_shortner.controller';
-import { IResponseResults, IUrlResponse } from '../dtos';
+import { IResponseResults, IUrlRedirectionResponse, IUrlResponse } from '../dtos';
 import { UrlService } from '../services/url_shortner.service';
 import { UrlShortnerModule } from '../url_shortner.module';
 
 describe('Urlshortner Module', () => {
     let shortnerController: UrlShortnerController;
     let urlService: UrlService;
+    let validShortCode = '';
     beforeAll(async () => {
         const moduleRef: TestingModule = await Test.createTestingModule({
             imports: [
@@ -84,33 +85,55 @@ describe('Urlshortner Module', () => {
     describe('UrlShortnerService', () => {
         describe('UrlShortnerService testing', () => {
             it('get all url', async () => {
-                try {
-                    await urlService.createShortUrl({
-                        "originalUrl": "http://googletest.vom",
-                        "expiryDate": new Date("2022-11-17T06:49:48.010Z")
-                    })
-                    const info: IUrlResponse = await urlService.getAllShortUrl()
-                    expect(info.resultCount).toBe(2)
-                } catch (error: any) {
-                    console.log(error)
-                }
+                await urlService.createShortUrl({
+                    "originalUrl": "http://googletest.vom",
+                    "expiryDate": new Date("2022-11-17T06:49:48.010Z")
+                })
+                const info: IUrlResponse = await urlService.getAllShortUrl()
+                expect(info.resultCount).toBe(2)
             });
-            // it('With Valid url', async () => {
-            //     expect.assertions(2);
-            //     const info: IResponseResults = await shortnerController.createShortUrl({
-            //         "originalUrl": "http://google.vom",
-            //         "expiryDate": new Date("2022-11-17T06:49:48.010Z")
-            //     })
-            //     expect(info.isValid).toBeTruthy();
-            //     expect(info.result).toMatch(new RegExp(TERMS.REGEX_URL_VALIDATION_LOCAL_TEST, 'i'));
-            // });
-            // it('With duplicate url', async () => {
-            //     const info: IResponseResults = await shortnerController.createShortUrl({
-            //         "originalUrl": "http://google.vom",
-            //         "expiryDate": new Date("2022-11-17T06:49:48.010Z")
-            //     })
-            //     expect(info.result.message).toBe(TERMS.EXISTING_URL);
-            // });
+            it('get filtered url', async () => {
+                const info: IUrlResponse = await urlService.getAllShortUrl({
+                    keyword: 'tes'
+                })
+                expect(info.totalCount).toBe(2)
+                expect(info.resultCount).toBe(1)
+            });
+            it('get filtered url result zero', async () => {
+                const info: IUrlResponse = await urlService.getAllShortUrl({
+                    keyword: 'yes'
+                })
+                expect(info.totalCount).toBe(2)
+                expect(info.resultCount).toBe(0)
+            });
+            it('check for valid url with valid code', async () => {
+                await urlService.createShortUrl({
+                    "originalUrl": "http://urlwithvalidexpirydate.vom",
+                    "expiryDate": new Date("2024-11-17T06:49:48.010Z")
+                })
+                const urlData: IUrlResponse = await urlService.getAllShortUrl({
+                    keyword: 'expi'
+                })
+                expect(urlData.resultCount).toBe(1)
+                expect(urlData.totalCount).toBe(3)
+                validShortCode = urlData.urls[0].shortCode;
+                const info: IUrlRedirectionResponse = await urlService.getFullUrlFromShortCode(validShortCode);
+                expect(info.IsNotFoundStatus).toBeUndefined()
+                expect(info.IsExpired).toBeFalsy()
+            });
+            it('check for expired url with valid code', async () => {
+                const urlData: IUrlResponse = await urlService.getAllShortUrl()
+                expect(urlData.totalCount).toBe(3)
+                validShortCode = urlData.urls[0].shortCode;
+                const info: IUrlRedirectionResponse = await urlService.getFullUrlFromShortCode(validShortCode);
+                expect(info.IsNotFoundStatus).toBeFalsy()
+                expect(info.IsExpired).toBeTruthy()
+            });
+            it('check for url with invalid code', async () => {
+                const info: IUrlRedirectionResponse = await urlService.getFullUrlFromShortCode('sdhfksjdhdkjhd');
+                expect(info.IsNotFoundStatus).toBeTruthy()
+                expect(info.IsExpired).toBeFalsy()
+            });
         });
     });
 });
