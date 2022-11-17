@@ -2,25 +2,99 @@
   <h1>Url Shortner</h1>
 </div>
 
-## Description
-Please find the description of the steps needed to run the application.
-## Installation
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#built-with">Tech stack includes</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+        <li><a href="#running-the-app">Running</a></li>
+      </ul>
+    </li>
+    <li><a href="#endpoints">Endpoints</a></li>
+    <li><a href="#test">Test</a></li>
+    <li><a href="#important-notice">Important notice</a></li>
+    <li><a href="#contact">Developers Contact</a></li>
+  </ol>
+</details>
+
+## About the project
+It's a project to built a url shortner microservice which will support some functionalities like expiration time, domain blacklisting and domain clearance.
+The key features of this is, expiration timeout and blacklisting domains. This will give the admin much more controll over the service. Hope you will enjoy using it.
+
+## Build with
+1. Nodejs
+2. Nestjs
+3. Typescript
+4. Mongodb
+5. Docker
+6. JWT
+7. Express
+8. OpenApi
+
+## Getting started
+Lets begin with the Prerequisites and installation processes.
+
+### Prerequisites
+* Nodejs
+* NestCLi
+```bash
+  npm i -g @nestjs/cli
+```
+* Typescript
+```bash
+  npm install typescript -g
+```
+* Mongodb
+
+### Installation
+To install all the dependencies run.
 
 ```bash
-$ npm install
+npm install
+```
+Note: There are 3 environment files included with this project.
+1. local.env
+2. dev.env
+3. production.env
+
+If you see the scripts of package.json file, you will see these scripts.
+```bash
+"start:local": "cross-env NODE_ENV=local nest start --watch"
+```
+```bash
+"start:dev": "cross-env NODE_ENV=dev node main"
+```
+```bash
+"start:prod": "cross-env NODE_ENV=production node main"
+``` 
+Those NODE_ENV variables data is aligned with those environment files.Local command is mainly for local development purpose. dev and prod commands are for using on cloud environments.
+
+### Running the app
+
+```bash
+# local development
+npm run start:local
+
+# dev environment
+npm run start:dev
+
+# production environment
+npm run start:prod
 ```
 
-## Running the app
-
+## Endpoints
+After running the code you will have all the endpoints available for making any calls. I have not included any information of the endpoints seperately here as ther are already properly documented in the SWAGGER link. You can just go to the browser and get all of them using.
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+http://yourdomain/api/docs
 ```
 
 ## Test
@@ -36,6 +110,43 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Stay in touch
+
+
+## Important notice
+For the admin endpoints you need to add an extra header named 'x-auth-token'. 
+### How to get 'x-auth-token' token?
+You can get that token from the endpoint 
+```bash
+/auth/token/super-admin/sign
+```
+This endpoint is a part of Auth controller. This can be easily get from the swagger documentation.
+### How to add the token to header?
+If you are use browser, you can add it using MODHEADER browser extension. Otherwise postman or insomnia has that options available to add custom header with the request.
+
+### Dockerfile configuration
+There is a Dockerfile included with the project. So anyone can create an image of it and run it using Docker container. If you check the Dockerfile, at the end line of it has command 
+
+```bash
+CMD ["npm", "run", "start:dev"]
+```
+Which indicates on which environment you want to run the app. So please change it according to the information mentioned above if you want to run different environment file.
+
+### Env files config
+
+Also inside the env files there are 2 variables named PORT and BASE_URL. Those are very important to make sure that which port you want to run the application and the BASE_URL will be the domain you will run this application.So Please modify it accordingly before your installation.
+
+### Testing configuration
+There are 2 testing files included in this project.
+1. src/app.controller.spec.ts
+2. src/url_shortner/test/urlshortner.controller.spec.ts
+
+If anyone want to write more tests, you are welcome to write more.
+
+Last but not the least, inside the local.env file there is an extra variable added named MONGODB_URI_TEST.
+This variable is used to run test so that we can use seperate db for testing.
+As I have preferred to use test DB rather using mock,fake or stubs.
+But don't worry test DB will be removed after the test run. Since tests are only used to run in the local development period.That's why I have kept it on local env file only. I hope that makes sense.
+
+## Contact
 
 - Author - [Naieem Mahmud Supto](https://github.com/naieem)
