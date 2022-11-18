@@ -48,13 +48,20 @@ describe('Urlshortner Module', () => {
      */
     describe('UrlShortnerController', () => {
         describe('createshorturl endpoint testing', () => {
-            // it('truthy value', () => {
-            //     expect(urlService.sayhello()).toBe('hellp');
-            // });
+            it('With Blacklisted url pattern', async () => {
+                try {
+                    const info: IResponseResults = await shortnerController.createShortUrl({
+                        "originalUrl": "http://xxxx.com",
+                        "expiryDate": new Date("2024-11-17T06:49:48.010Z")
+                    })
+                } catch (error: any) {
+                    expect(error.message).toBe('Error: ' + TERMS.BLACKLISTED_MSG)
+                }
+            });
             it('With Invalid url and Invalid expiry date', async () => {
                 try {
                     const info: IResponseResults = await shortnerController.createShortUrl({
-                        "originalUrl": "http://google.m",
+                        "originalUrl": "//google.m",
                         "expiryDate": new Date("2022-11-17T06:49:48.010Z")
                     })
                 } catch (error: any) {
