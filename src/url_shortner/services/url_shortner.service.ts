@@ -10,10 +10,7 @@ import { nanoid } from 'nanoid';
 
 @Injectable()
 export class UrlService {
-    constructor(@InjectModel(Url.name) private readonly urlModel: Model<Url>, private configService: ConfigService) { }
-    sayhello() {
-        return 'hello';
-    }
+    constructor(@InjectModel(Url.name) public urlModel: Model<Url>, private configService: ConfigService) { }
     /**
      * Handler for creating shortUrl from Original Url
      * @param  {CreateShortCodeDTO} payload
