@@ -1,4 +1,5 @@
 import { IUrlFilter, UrlFilterDTO } from "../url_shortner/dtos";
+import { BLACKLIST } from './BLACKLIST'
 
 interface IConditions {
     [key: string]: Object
@@ -16,8 +17,9 @@ export const TERMS = {
     'UNAUTHORIZED_TEXT': 'You are not authorized.',
     'FORBIDDEN_TEXT': 'You are forbidden to see this.',
     'INVALID_URL': 'Url not valid.',
-    'DATE_EXPIRED':'Provided expiry date should be future date.',
-    'REGEX_URL_VALIDATION_LOCAL_TEST': 'https?:\/{2}([a-zA-Z1-9])+:[0-9]{4}\/[a-zA-Z\w\d_]+'
+    'DATE_EXPIRED': 'Provided expiry date should be future date.',
+    'BLACKLISTED_MSG': 'Sorry,Provided url is in blacklisted category.',
+    'REGEX_URL_VALIDATION_LOCAL_TEST': 'https?:\/{2}([a-zA-Z1-9])+:[0-9]{4}\/[a-zA-Z1-9_]+',
 }
 /**
  * Url validator function for using globally throughout the application
@@ -44,7 +46,7 @@ export const expiryDateValidator = (dateToValidate: Date): boolean => {
     return expiryDate < today ? true : false
 }
 /**
- * Organis query format for mongod query when all urls call
+ * Organise query format for mongod query when all urls call
  * @param  options {@link UrlFilterDTO} object
  * @returns IQueryMaker {@link IQueryMaker} object
  */
@@ -73,4 +75,17 @@ export const queryMaker = (options: UrlFilterDTO): {} | IQueryMaker => {
         }
     }
     return query
+}
+export const blackListChecker = (url: string) => {
+    let isBlackListed: boolean = false;
+    if (BLACKLIST && BLACKLIST.length) {
+        for (const list of BLACKLIST) {
+            const matches = url.match(new RegExp(list, 'i'));
+            if (matches && matches.length) {
+                isBlackListed = true;
+                break;
+            }
+        }
+    }
+    return isBlackListed;
 }

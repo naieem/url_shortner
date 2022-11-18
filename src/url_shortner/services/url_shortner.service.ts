@@ -2,7 +2,7 @@ import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Url, UrlQueriableFields } from '../schema/url.schema';
-import { expiryDateValidator, queryMaker, TERMS, urlValidator } from '../../utils/constants';
+import { blackListChecker, expiryDateValidator, queryMaker, TERMS, urlValidator } from '../../utils/constants';
 import { ConfigService } from '@nestjs/config';
 import { ICreateShorturlResponse, IUrlRedirectionResponse, CreateShortCodeDTO, UrlFilterDTO, IUrlFilter, IAllUrlResponseResult, IUrlResponse } from '../dtos';
 import { nanoid } from 'nanoid';
@@ -18,7 +18,10 @@ export class UrlService {
      */
     async createShortUrl(payload: CreateShortCodeDTO): Promise<ICreateShorturlResponse | string> {
         try {
-
+            const isBlackListed= blackListChecker(payload.originalUrl);
+            if (isBlackListed) {
+                throw new Error(TERMS.BLACKLISTED_MSG);
+            }
             const isValid = urlValidator(payload.originalUrl);
             if (!isValid) {
                 throw new Error(TERMS.INVALID_URL);
