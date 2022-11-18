@@ -132,6 +132,12 @@ CMD ["npm", "run", "start:dev"]
 ```
 Which indicates on which environment you want to run the app. So please change it according to the information mentioned above if you want to run different environment file.
 
+### BlackList file
+All the blacklisted pattern or regex is added to the file.
+```bash
+src/utils/BLACKLIST.ts
+```
+Please update this file if you want to add more on the list.
 ### Env files config
 
 Also inside the env files there are 2 variables named PORT and BASE_URL. Those are very important to make sure that which port you want to run the application and the BASE_URL will be the domain you will run this application.So Please modify it accordingly before your installation.

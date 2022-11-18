@@ -76,6 +76,10 @@ export const queryMaker = (options: UrlFilterDTO): {} | IQueryMaker => {
     }
     return query
 }
+/**
+ * Checking if an url is matched with a blacklisted data
+ * @param  {string} url
+ */
 export const blackListChecker = (url: string) => {
     let isBlackListed: boolean = false;
     if (BLACKLIST && BLACKLIST.length) {
