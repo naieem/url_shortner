@@ -51,7 +51,7 @@ describe('Urlshortner Module', () => {
             // it('truthy value', () => {
             //     expect(urlService.sayhello()).toBe('hellp');
             // });
-            it('With Invalid url', async () => {
+            it('With Invalid url and Invalid expiry date', async () => {
                 try {
                     const info: IResponseResults = await shortnerController.createShortUrl({
                         "originalUrl": "http://google.m",
@@ -61,11 +61,31 @@ describe('Urlshortner Module', () => {
                     expect(error.message).toBe('Error: ' + TERMS.INVALID_URL)
                 }
             });
-            it('With Valid url', async () => {
+            it('With Invalid url and valid expiry date', async () => {
+                try {
+                    const info: IResponseResults = await shortnerController.createShortUrl({
+                        "originalUrl": "http://google.m",
+                        "expiryDate": new Date("2024-11-17T06:49:48.010Z")
+                    })
+                } catch (error: any) {
+                    expect(error.message).toBe('Error: ' + TERMS.INVALID_URL)
+                }
+            });
+            it('With Valid url and Invalid expiry date', async () => {
+                try {
+                    const info: IResponseResults = await shortnerController.createShortUrl({
+                        "originalUrl": "http://google.vom",
+                        "expiryDate": new Date("2022-11-17T06:49:48.010Z")
+                    })
+                } catch (error: any) {
+                    expect(error.message).toBe('Error: ' + TERMS.DATE_EXPIRED)
+                }
+            });
+            it('With Valid url and valid expiry date', async () => {
                 expect.assertions(2);
                 const info: IResponseResults = await shortnerController.createShortUrl({
                     "originalUrl": "http://google.vom",
-                    "expiryDate": new Date("2022-11-17T06:49:48.010Z")
+                    "expiryDate": new Date("2024-11-17T06:49:48.010Z")
                 })
                 expect(info.isValid).toBeTruthy();
                 expect(info.result).toMatch(new RegExp(TERMS.REGEX_URL_VALIDATION_LOCAL_TEST, 'i'));
@@ -73,7 +93,7 @@ describe('Urlshortner Module', () => {
             it('With duplicate url', async () => {
                 const info: IResponseResults = await shortnerController.createShortUrl({
                     "originalUrl": "http://google.vom",
-                    "expiryDate": new Date("2022-11-17T06:49:48.010Z")
+                    "expiryDate": new Date("2024-11-17T06:49:48.010Z")
                 })
                 expect(info.result.message).toBe(TERMS.EXISTING_URL);
             });
@@ -87,7 +107,7 @@ describe('Urlshortner Module', () => {
             it('get all url', async () => {
                 await urlService.createShortUrl({
                     "originalUrl": "http://googletest.vom",
-                    "expiryDate": new Date("2022-11-17T06:49:48.010Z")
+                    "expiryDate": new Date("2024-11-17T06:49:48.010Z")
                 })
                 const info: IUrlResponse = await urlService.getAllShortUrl()
                 expect(info.resultCount).toBe(2)
@@ -124,6 +144,8 @@ describe('Urlshortner Module', () => {
             it('check for expired url with valid code', async () => {
                 const urlData: IUrlResponse = await urlService.getAllShortUrl()
                 expect(urlData.totalCount).toBe(3)
+                urlData.urls[0].expiryDate = new Date("2022-11-17T06:49:48.010Z");
+                await urlService.urlModel.updateOne({ originalUrl: urlData.urls[0].originalUrl }, urlData.urls[0])
                 validShortCode = urlData.urls[0].shortCode;
                 const info: IUrlRedirectionResponse = await urlService.getFullUrlFromShortCode(validShortCode);
                 expect(info.IsNotFoundStatus).toBeFalsy()
