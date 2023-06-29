@@ -1,0 +1,33 @@
+name: learn-github-actions
+on:
+  push:
+    branches:
+      - dev
+env:
+  TINGTONG: ${{ secrets.TINGTONG }}
+
+jobs:
+  খেলা-সুরু:
+    runs-on: ubuntu-latest
+    env:
+      Greeting: Hello
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.13.x
+          cache: npm
+
+      - name: Install
+        run: npm i
+
+      - name: Run Build
+        run: npm run build
+
+      - name: Print tingtong
+        run: echo "$Greeting $First_Name. Today is $TINGTONG!"
+        env:
+          First_Name: Naieem
