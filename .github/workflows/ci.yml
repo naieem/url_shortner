@@ -25,3 +25,6 @@ jobs:
         run: echo "$Greeting $First_Name. Today is $TINGTONG!"
         env:
           First_Name: Naieem
+
+      - name: Run test file
+        run: node run test-workflow

@@ -14,6 +14,7 @@
     "start:prod": "cross-env NODE_ENV=production node main",
     "test": "cross-env NODE_ENV=local jest",
     "test:watch": "jest --watch",
+    "test-workflow":"node test.js",
     "test:cov": "cross-env NODE_ENV=local jest --coverage"
   },
   "dependencies": {
