@@ -1,1 +1,3 @@
-console.log(process.env.TINGTONG);
+if (process.env.TINGTONG === 'kire') {
+    console.log('secret er value kire');
+}
