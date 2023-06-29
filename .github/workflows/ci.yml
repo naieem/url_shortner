@@ -27,4 +27,4 @@ jobs:
           First_Name: Naieem
 
       - name: Run test file
-        run: node run test-workflow
+        run: npm run test-workflow
