@@ -5,6 +5,7 @@ on:
       - dev
 env:
   TINGTONG: ${{ secrets.TINGTONG }}
+  TEST: ${{ github.ref_name == 'dev' && secrets.TINGTONG || 'value_for_other_branches' }}
 
 jobs:
   khela_suru:
@@ -27,7 +28,7 @@ jobs:
         id: extract_branch
 
       - name: Print tingtong
-        run: echo "$Greeting $First_Name. Today is $TINGTONG!. Our current branch is ${{ steps.extract_branch.outputs.branch }}"
+        run: echo "$Greeting $First_Name. Today is $TINGTONG! $TEST. Our current branch is ${{ steps.extract_branch.outputs.branch }}"
         env:
           First_Name: Naieem
 
