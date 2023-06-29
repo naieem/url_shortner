@@ -7,7 +7,7 @@ env:
   TINGTONG: ${{ secrets.TINGTONG }}
 
 jobs:
-  খেলা-সুরু:
+  khela_suru:
     runs-on: ubuntu-latest
     env:
       Greeting: Hello
