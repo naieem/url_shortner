@@ -31,5 +31,10 @@ jobs:
         env:
           First_Name: Naieem
 
+      - name: Direct branch name getting
+        run: echo "Running on branch ${GITHUB_REF##*/}"
+        env:
+          First_Name: Naieem
+
       - name: Run test file
         run: npm run test-workflow
