@@ -21,8 +21,13 @@ jobs:
       - name: Run Build
         run: npm run build
 
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+
       - name: Print tingtong
-        run: echo "$Greeting $First_Name. Today is $TINGTONG!"
+        run: echo "$Greeting $First_Name. Today is $TINGTONG!. Our current branch is ${{ steps.extract_branch.outputs.branch }}"
         env:
           First_Name: Naieem
 
