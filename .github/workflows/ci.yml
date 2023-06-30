@@ -5,7 +5,7 @@ on:
       - dev
 env:
   TINGTONG: ${{ secrets.TINGTONG }}
-  TEST: ${{ github.ref_name == 'dev1' && secrets.TINGTONG || 'value_for_other_branches' }}
+  TEST: ${{ github.ref_name == 'dev' && secrets.TINGTONG || 'value_for_other_branches' }}
 
 jobs:
   khela_suru:
